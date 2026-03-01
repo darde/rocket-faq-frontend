@@ -51,11 +51,12 @@ npm install
 
 **3. Configure the API URL**
 
-```bash
-cp .env.example .env
-```
+This project uses environment-specific files:
 
-For **local development**, keep the default:
+- `.env.development` for local development
+- `.env.production` for production builds
+
+For **local development**, we keep:
 
 ```
 VITE_API_URL=/api
@@ -63,10 +64,10 @@ VITE_API_URL=/api
 
 Vite's dev proxy forwards `/api` requests to `http://localhost:8000` (the backend). Make sure the backend is running.
 
-For **production**, set the full backend URL:
+For **production**, we use:
 
 ```
-VITE_API_URL=https://your-backend-domain.com/api
+VITE_API_URL=https://rocket-faq-backend.onrender.com/
 ```
 
 **4. Start the dev server**
@@ -117,7 +118,7 @@ rocket-faq-frontend/
 
 | Variable | Default | Description |
 |---|---|---|
-| `VITE_API_URL` | `/api` | Backend API base URL. Use `/api` for local dev (proxied), or a full URL for production |
+| `VITE_API_URL` | `/api` (dev), `https://rocket-faq-backend.onrender.com/` (prod) | Backend API base URL. Use `/api` for local dev (proxied), or a full URL for production |
 
 ---
 
