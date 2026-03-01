@@ -28,7 +28,16 @@ export interface JudgeResponse {
   sources: SourceInfo[];
 }
 
-const API_BASE = import.meta.env.VITE_API_URL || '/api';
+function normalizeApiBase(rawBase: string): string {
+  const trimmedBase = rawBase.trim().replace(/\/+$/, '');
+
+  if (!trimmedBase) return '/api';
+  if (trimmedBase === '/api' || trimmedBase.endsWith('/api')) return trimmedBase;
+
+  return `${trimmedBase}/api`;
+}
+
+const API_BASE = normalizeApiBase(import.meta.env.VITE_API_URL || '/api');
 
 export async function sendMessage(question: string): Promise<ChatResponse> {
   const res = await fetch(`${API_BASE}/chat/`, {

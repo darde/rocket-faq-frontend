@@ -67,7 +67,7 @@ Vite's dev proxy forwards `/api` requests to `http://localhost:8000` (the backen
 For **production**, we use:
 
 ```
-VITE_API_URL=https://rocket-faq-backend.onrender.com/
+VITE_API_URL=https://rocket-faq-backend.onrender.com/api
 ```
 
 **4. Start the dev server**
@@ -118,7 +118,7 @@ rocket-faq-frontend/
 
 | Variable | Default | Description |
 |---|---|---|
-| `VITE_API_URL` | `/api` (dev), `https://rocket-faq-backend.onrender.com/` (prod) | Backend API base URL. Use `/api` for local dev (proxied), or a full URL for production |
+| `VITE_API_URL` | `/api` (dev), `https://rocket-faq-backend.onrender.com/api` (prod) | Backend API base URL. Use `/api` for local dev (proxied), or a full URL for production |
 
 ---
 
