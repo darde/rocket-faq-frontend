@@ -6,10 +6,21 @@ export interface SourceInfo {
   question: string;
 }
 
+export interface GuardrailsInfo {
+  input_pii_detected: boolean;
+  injection_detected: boolean;
+  off_topic: boolean;
+  low_confidence: boolean;
+  disclaimers_added: string[];
+  blocked: boolean;
+}
+
 export interface ChatResponse {
   answer: string;
   sources: SourceInfo[];
   query: string;
+  guardrails: GuardrailsInfo;
+  request_id: string;
 }
 
 export interface JudgeEvaluation {
@@ -68,6 +79,24 @@ export async function sendMessage(question: string): Promise<ChatResponse> {
     method: 'POST',
     headers: getHeaders(),
     body: JSON.stringify({ question }),
+  });
+  checkResponseStatus(res);
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: 'Unknown error' }));
+    throw new Error(err.detail || `HTTP ${res.status}`);
+  }
+  return res.json();
+}
+
+export async function submitFeedback(
+  requestId: string,
+  rating: 'positive' | 'negative',
+  comment?: string
+): Promise<{ status: string }> {
+  const res = await fetch(`${API_BASE}/chat/feedback`, {
+    method: 'POST',
+    headers: getHeaders(),
+    body: JSON.stringify({ request_id: requestId, rating, comment }),
   });
   checkResponseStatus(res);
   if (!res.ok) {

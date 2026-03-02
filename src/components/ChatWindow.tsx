@@ -1,12 +1,15 @@
 import { useState, useRef, useEffect } from 'react';
 import ChatMessage from './ChatMessage';
-import { sendMessage } from '../api/client';
-import type { SourceInfo } from '../api/client';
+import { sendMessage, submitFeedback } from '../api/client';
+import type { SourceInfo, GuardrailsInfo } from '../api/client';
 
 interface Message {
   role: 'user' | 'assistant';
   content: string;
   sources?: SourceInfo[];
+  requestId?: string;
+  guardrails?: GuardrailsInfo;
+  feedback?: 'positive' | 'negative' | null;
 }
 
 const SUGGESTIONS = [
@@ -38,7 +41,14 @@ export default function ChatWindow() {
       const res = await sendMessage(question);
       setMessages((prev) => [
         ...prev,
-        { role: 'assistant', content: res.answer, sources: res.sources },
+        {
+          role: 'assistant',
+          content: res.answer,
+          sources: res.sources,
+          requestId: res.request_id,
+          guardrails: res.guardrails,
+          feedback: null,
+        },
       ]);
     } catch (err) {
       setMessages((prev) => [
@@ -50,6 +60,23 @@ export default function ChatWindow() {
       ]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleFeedback = async (
+    messageIndex: number,
+    requestId: string,
+    rating: 'positive' | 'negative'
+  ) => {
+    try {
+      await submitFeedback(requestId, rating);
+      setMessages((prev) =>
+        prev.map((msg, i) =>
+          i === messageIndex ? { ...msg, feedback: rating } : msg
+        )
+      );
+    } catch (err) {
+      console.error('Failed to submit feedback:', err);
     }
   };
 
@@ -100,6 +127,12 @@ export default function ChatWindow() {
                 role={msg.role}
                 content={msg.content}
                 sources={msg.sources}
+                requestId={msg.requestId}
+                guardrails={msg.guardrails}
+                feedback={msg.feedback}
+                onFeedback={(rating) =>
+                  handleFeedback(i, msg.requestId!, rating)
+                }
               />
             ))
           )}
