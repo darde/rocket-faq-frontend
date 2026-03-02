@@ -1,6 +1,6 @@
 interface HeaderProps {
-  activeTab: 'chat' | 'eval';
-  onTabChange: (tab: 'chat' | 'eval') => void;
+  activeTab: 'chat' | 'eval' | 'dashboard';
+  onTabChange: (tab: 'chat' | 'eval' | 'dashboard') => void;
 }
 
 export default function Header({ activeTab, onTabChange }: HeaderProps) {
@@ -53,6 +53,16 @@ export default function Header({ activeTab, onTabChange }: HeaderProps) {
             }`}
           >
             Evaluation
+          </button>
+          <button
+            onClick={() => onTabChange('dashboard')}
+            className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
+              activeTab === 'dashboard'
+                ? 'bg-white text-red-700'
+                : 'text-red-100 hover:bg-red-800/40'
+            }`}
+          >
+            Dashboard
           </button>
         </nav>
       </div>

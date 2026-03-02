@@ -49,6 +49,7 @@ function normalizeApiBase(rawBase: string): string {
 }
 
 const API_BASE = normalizeApiBase(import.meta.env.VITE_API_URL || '/api');
+const ROOT_BASE = API_BASE.replace(/\/api$/, '');
 const API_KEY = import.meta.env.VITE_API_KEY || '';
 
 function getHeaders(): Record<string, string> {
@@ -133,6 +134,52 @@ export async function runRetrievalEval(k: number = 5) {
 
 export async function runFullEval() {
   const res = await fetch(`${API_BASE}/eval/full`, {
+    method: 'POST',
+    headers: getHeaders(),
+  });
+  checkResponseStatus(res);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
+
+export async function getStats() {
+  const res = await fetch(`${ROOT_BASE}/stats`, {
+    headers: getHeaders(),
+  });
+  checkResponseStatus(res);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
+
+export async function getGovernanceSummary() {
+  const res = await fetch(`${API_BASE}/governance/summary`, {
+    headers: getHeaders(),
+  });
+  checkResponseStatus(res);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
+
+export async function getAgentReports() {
+  const res = await fetch(`${API_BASE}/agents/reports`, {
+    headers: getHeaders(),
+  });
+  checkResponseStatus(res);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
+
+export async function getAgentReport(filename: string) {
+  const res = await fetch(`${API_BASE}/agents/reports/${encodeURIComponent(filename)}`, {
+    headers: getHeaders(),
+  });
+  checkResponseStatus(res);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
+
+export async function runAgent(type: 'review' | 'document' | 'tech-debt' | 'full') {
+  const res = await fetch(`${API_BASE}/agents/${type}`, {
     method: 'POST',
     headers: getHeaders(),
   });
